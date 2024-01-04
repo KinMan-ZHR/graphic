@@ -78,7 +78,9 @@ public class Camera {
 // worldUp: 世界坐标系的上方向
     public void lookAt()
     {
-        Vec3f cameraDirection = cameraFront;
+        //Camera Direction是cameraFront的负数
+        Vec3f cameraDirection =new Vec3f();
+        cameraDirection.sub(cameraFront);
         cameraDirection.normalize();
         Vec3f cameraRight =new Vec3f();
         cameraRight.cross(this.cameraUp.normalize(), cameraDirection);
@@ -120,7 +122,7 @@ public class Camera {
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     public void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
-        float velocity = -MovementSpeed * deltaTime;
+        float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD){
              cameraPos.add(cameraFront.mul(velocity));
         }
@@ -150,7 +152,7 @@ public class Camera {
         yoffset *= Mousesensitivity;
 
         yaw   += xoffset;
-        pitch += yoffset;
+        pitch -= yoffset;
 
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch)

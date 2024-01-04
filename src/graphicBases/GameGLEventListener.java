@@ -31,7 +31,7 @@ public class GameGLEventListener implements GLEventListener {
     public static ShaderManager lightShaderManager;
 
     // 主方法，创建一个窗口并添加一个画布
-    public static Camera camera =new Camera(0,0,-4,0,0,0);
+    public static Camera camera =new Camera(0,0,4,0,0,0);
     public static long frameDeltaTime= System.currentTimeMillis();
     private static long lastFrameTime= System.currentTimeMillis();
     private static long currentFrameTime= System.currentTimeMillis();//当前时间 单位：毫秒

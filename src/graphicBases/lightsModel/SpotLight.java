@@ -96,7 +96,7 @@ public class SpotLight extends ProgrammableLight {
      */
     @Override
     public void lightDraw(GL4 gl4) {
-        System.out.println("cameraFront:"+GameGLEventListener.camera.cameraFront);
+        //System.out.println("cameraFront:"+GameGLEventListener.camera.cameraFront);
         GameGLEventListener.objectShaderManager.useShaderProgram();
         GameGLEventListener.objectShaderManager.setUniform("spotLight.position",GameGLEventListener.camera.cameraPos);
         GameGLEventListener.objectShaderManager.setUniform("spotLight.direction",GameGLEventListener.camera.cameraFront);
