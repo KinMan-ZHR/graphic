@@ -2,6 +2,7 @@ package graphicBases.programmableSupport;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.math.Vec3f;
 
 import java.util.ArrayList;
 
@@ -13,23 +14,25 @@ import java.util.ArrayList;
  */
 public abstract class ProgrammableLight extends ProgrammableBase{
     /**
-     * 可编程管线基础类，想要轻松的画画，继承这个类，实现抽象方法即可
-     *
+     * 可编程管线基础光源类，想要轻松的画画，继承这个类，实现抽象方法即可
+     * 该类相较于ProgrammableBase类，仅仅是帮你屏蔽掉光源无须涉及的部分，但是提供了一个lightDraw方法，让你写入着色器
+     * 若要定义一种新的光源，这里建议您使用继承的方式，实现lightDraw方法
+     * 若要希望定义的新光源有自己的纹理材质，这里建议您使用继承的方式，重写defineTexture, useTexture方法
+     * 建议在定义一个抽象类实现lightDraw方法，然后再定义实现类，实现自己的光源
+     * 实现类的命名方式为：光源名+区别名,例如：PointLightPure
      * @param glAutoDrawable
      */
-    protected float[] lightPos;
-    protected float  constant;
-    protected float linear;
-    protected float quadratic;
+
     public static ArrayList<ProgrammableLight> list=new ArrayList<>();
-    public ProgrammableLight(GLAutoDrawable glAutoDrawable,float x,float y,float z,float constant,float linear,float quadratic) {
+    public ProgrammableLight(GLAutoDrawable glAutoDrawable) {
         super(glAutoDrawable);
-        lightPos = new float[]{x, y, z};
-        this.constant=constant;
-        this.linear=linear;
-        this.quadratic=quadratic;
         list.add(this);
     }
+//    /**
+//     * 请定义自己的初始位置数据,如果使用的是方向光,请返回null
+//     */
+//    protected abstract Vec3f[] defineInitPos();
+
 
 
     /**
@@ -73,6 +76,15 @@ public abstract class ProgrammableLight extends ProgrammableBase{
         for (ProgrammableLight programmableLight : list) {
             programmableLight.lightDraw(gl4);
         }
+    }
+    /**
+     * 画材质
+     *
+     * @param gl4
+     */
+    @Override
+    public void materialDraw(GL4 gl4) {
+
     }
 
 

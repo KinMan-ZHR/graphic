@@ -13,82 +13,39 @@ import graphicBases.programmableSupport.ProgrammableLight;
  * @author KinMan谨漫
  * ,
  */
-public class SpotLight extends ProgrammableLight {
+public abstract class SpotLight extends ProgrammableLight {
 
-    float cutOff= (float) Math.cos( Math.toRadians(12.5f));
-    float outerCutOff= (float) Math.cos(Math.toRadians(15f));
-
-    public SpotLight(GLAutoDrawable glAutoDrawable) {
-        super(glAutoDrawable, 0, 0, 0, 1.0f, 0.09f, 0.032f);
-    }
-
+    protected float cutOff;
+    protected float outerCutOff;
+    protected float  constant;
+    protected float linear;
+    protected float quadratic;
+    private static int count=0;
+    protected Vec3f direction;
     /**
-     * 请定义自己的顶点数据
-     *
-     * @return 顶点数据
-     */
-    @Override
-    protected float[] getVertexData() {
-        return new float[0];
-    }
-
-    /**
-     * 画一般固定的部分
-     * 一般是以下内容
-     * // 位置属性
-     * gl4.glEnableVertexAttribArray(0); // 启用顶点属性数组
-     * gl4.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 8*Float.BYTES, 0); // 设置顶点属性数组的格式和位置
-     * // 颜色属性
-     * gl4.glVertexAttribPointer(1, 3, GL_FLOAT, false, 8*Float.BYTES, 3*Float.BYTES);
-     * gl4.glEnableVertexAttribArray(1);
-     * // 纹理坐标属性
-     * gl4.glVertexAttribPointer(2, 2, GL_FLOAT, false, 8*Float.BYTES, 6*Float.BYTES);
-     * gl4.glEnableVertexAttribArray(2);
-     *
-     * @param gl4
-     */
-    @Override
-    protected void initDraw(GL4 gl4) {
-
-    }
-
-    /**
-     * 画材质
-     *
-     * @param gl4
-     */
-    @Override
-    public void materialDraw(GL4 gl4) {
-
-    }
-
-    /**
-     * 愉快的画画，用gl4.glDraw选择画什么即可,最好是随时会变的部分
-     * Matrix4f model = new Matrix4f();
-     * GameGLEventListener.objectShaderManager.setUniform("model", model);
-     * gl4.glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
-     *
-     * @param gl4
-     */
-    @Override
-    protected void happyDraw(GL4 gl4) {
-
-    }
-
-    /**
-     * float[]ambient,float[]diffuse,float[]specular,float shininess
-     * 构造Material
-     *
-     * @return Material 材质
+     * 聚光灯抽象类
+     * 该类相较于ProgrammableLight类，会自动帮你处理光质,如要改变写入的着色器，请重写lightDraw方法
+     * 若要定义材质纹理，这里建议您使用继承的方式，实现defineMaterial方法,相应的，如要改变请继承后重写defineMaterial方法
+     * 若要定义顶点数据，这里建议您使用继承的方式，实现getVertexData方法,相应的，如要改变请继承后重写getVertexData方法
+     * 实现类的命名方式为：形状名+材质名+区别名/或者用途,例如：Cube_Gold_Pure
+     * @param glAutoDrawable
      */
 
-    @Override
-    protected Material defineMaterial() {
-        return new Material(
-                new float[]{0.0f, 0.0f, 0.0f},
-                new float[]{1.0f, 1.0f, 1.0f},
-                new float[]{1.0f, 1.0f, 1.0f}
-        );
+    public SpotLight(GLAutoDrawable glAutoDrawable, float x, float y, float z,Vec3f direction) {
+        super(glAutoDrawable);
+        processCutoff();
+        processAttenuation();
+        position.set(x,y,z);
+        this.direction=direction;
+        count++;
+    }
+    public SpotLight(GLAutoDrawable glAutoDrawable, Vec3f position,Vec3f direction) {
+        super(glAutoDrawable);
+        processCutoff();
+        processAttenuation();
+        this.position=position;
+        this.direction=direction;
+        count++;
     }
 
     /**
@@ -96,19 +53,45 @@ public class SpotLight extends ProgrammableLight {
      */
     @Override
     public void lightDraw(GL4 gl4) {
-        //System.out.println("cameraFront:"+GameGLEventListener.camera.cameraFront);
-        GameGLEventListener.objectShaderManager.useShaderProgram();
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.position",GameGLEventListener.camera.cameraPos);
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.direction",GameGLEventListener.camera.cameraFront);
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.ambient",material.getAmbient());
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.diffuse",material.getDiffuse());
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.specular",material.getSpecular());
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.constant",constant);
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.linear",linear);
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.quadratic",quadratic);
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.cutOff",cutOff);
-        GameGLEventListener.objectShaderManager.setUniform("spotLight.outerCutOff",outerCutOff);
+        for (int i = 0; i < count; i++) {
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].position",position);
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].direction",direction);
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].ambient",material.getAmbient());
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].diffuse",material.getDiffuse());
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].specular",material.getSpecular());
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].constant",constant);
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].linear",linear);
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].quadratic",quadratic);
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].cutOff",cutOff);
+            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].outerCutOff",outerCutOff);
+        }
+
+
 
 
     }
+    private void processAttenuation(){
+        float[] attenuation=defineAttenuation();
+        constant=attenuation[0];
+        linear=attenuation[1];
+        quadratic=attenuation[2];
+    }
+    /**
+     * return new float[]{constant,linear,quadratic};
+     * @return
+     */
+    protected abstract float[] defineAttenuation();
+    private void processCutoff(){
+        float[] temp=defineCutOff();
+        cutOff=(float) Math.cos( Math.toRadians(temp[0]));
+        outerCutOff=(float) Math.cos( Math.toRadians(temp[1]));
+    }
+    /**
+     *
+     * return new float[]{cutOffAngle,outerCutOffAngle};
+     * @return
+     */
+    protected abstract float[] defineCutOff();
+
+
 }

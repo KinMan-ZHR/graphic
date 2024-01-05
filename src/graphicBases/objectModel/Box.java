@@ -2,6 +2,7 @@ package graphicBases.objectModel;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
 import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableObject;
@@ -23,6 +24,12 @@ public class Box extends ProgrammableObject {
      */
     public Box(GLAutoDrawable glAutoDrawable) {
         super(glAutoDrawable);
+    }
+    public Box(GLAutoDrawable glAutoDrawable, Vec3f position) {
+        super(glAutoDrawable,position);
+    }
+    public Box(GLAutoDrawable glAutoDrawable, float positionX, float positionY, float positionZ) {
+        super(glAutoDrawable,positionX,positionY,positionZ);
     }
 
     /**
@@ -144,7 +151,7 @@ public class Box extends ProgrammableObject {
      */
     @Override
     protected void happyDraw(GL4 gl4) {
-        applyTranslation( 0, 0, 10,false);
+        applyTranslation( position,false);
         applyTransformation(gl4, GameGLEventListener.objectShaderManager);
         gl4.glBindVertexArray(vao);
         gl4.glDrawArrays(GL4.GL_TRIANGLES, 0, 36); // 绘制三角形
@@ -161,10 +168,10 @@ public class Box extends ProgrammableObject {
     protected Material defineMaterial() {
 
         return new Material(
-                new float[]{ 0.5f,1,1 },
-                new float[]{1,0.3f,1},
+                new float[]{ 0.2f,0.2f,0.2f},
+                new float[]{1,0.5f,0.31f},
                 new float[]{1,1,1},
-                60
+                32.0f
         );
     }
 

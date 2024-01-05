@@ -6,15 +6,12 @@ package graphicBases;
  * ,
  */
 // 导入相关的类和接口
+import createPalace.ForProgrammerCreate;
 import com.jogamp.opengl.*;
 import graphicBases.cameraModel.Camera;
-import graphicBases.lightsModel.PointLight;
-import graphicBases.lightsModel.SpotLight;
-import graphicBases.objectModel.Box;
 import graphicBases.programmableSupport.ProgrammableBase;
 import graphicBases.programmableSupport.ProgrammableLight;
 import graphicBases.programmableSupport.ProgrammableObject;
-import graphicBases.vertexPack.Cube2;
 import shaderControl.ShaderManager;
 
 import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
@@ -35,8 +32,6 @@ public class GameGLEventListener implements GLEventListener {
     public static long frameDeltaTime= System.currentTimeMillis();
     private static long lastFrameTime= System.currentTimeMillis();
     private static long currentFrameTime= System.currentTimeMillis();//当前时间 单位：毫秒
-    private static ProgrammableLight programmableLight;
-
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -47,11 +42,8 @@ public class GameGLEventListener implements GLEventListener {
         //调用三角形的绘制方法
         //new Triangle2(glAutoDrawable);
          //new Rectangle2(glAutoDrawable);
-        new Cube2(glAutoDrawable);
-        //new Box(glAutoDrawable);
-        //new PointLight(glAutoDrawable,1.2f,1.0f,2.0f,1.0f,0.2f,0.2f);
-        //new PointLight(glAutoDrawable,-1.2f,1.0f,2.0f,1.0f,0.2f,0.2f);
-        new SpotLight(glAutoDrawable);
+        //new Cube2(glAutoDrawable);
+       new ForProgrammerCreate(glAutoDrawable);
         lastFrameTime = System.currentTimeMillis();
 
 //        深度测试
@@ -107,9 +99,6 @@ public class GameGLEventListener implements GLEventListener {
         ProgrammableLight.lightDrawAll(gl);
         //物体
         ProgrammableBase.happyDrawAll(gl);
-    }
-    public void happyDraw(GL2 gl){
-
     }
 
     @Override

@@ -43,6 +43,7 @@ public class GameMouseListener implements MouseListener, MouseWheelListener, Mou
         // 获取鼠标按下时的位置，并赋值给第一个变量
         pressedPoint.x = e.getX();
         pressedPoint.y = e.getY();
+        //System.out.println("按下了x=" + pressedPoint.x + ", y=" + pressedPoint.y);
     }
 
     /**

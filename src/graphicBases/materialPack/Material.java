@@ -25,8 +25,8 @@ public class Material {
         this.shininess = 0;
     }
     public Material() {
-        this.ambient = new float[]{1.0f, 0.5f, 0.31f};
-        this.diffuse = new float[]{1.0f, 0.5f, 0.31f};
+        this.ambient = new float[]{1.0f, 1.0f, 1.0f};
+        this.diffuse = new float[]{1.0f, 1.0f, 1.0f};
         this.specular = new float[]{0.5f, 0.5f, 0.5f};
         this.shininess = 32.0f;
     }

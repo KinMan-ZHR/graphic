@@ -30,6 +30,7 @@ struct SpotLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+    int spotLightNum;
 };
 struct DirLight {
     vec3 direction;
@@ -38,7 +39,10 @@ struct DirLight {
     vec3 diffuse;
     vec3 specular;
 };
-#define NR_POINT_LIGHTS 1
+#define NR_DIR_LIGHTS 1
+#define NR_POINT_LIGHTS 2
+#define NR_SPOT_LIGHTS 1
+
 out vec4 FragColor;
 in vec3 ourColor;
 in vec2 TexCoord;
@@ -46,9 +50,9 @@ in vec3 FragPos;
 in vec3 Normal;
 uniform vec3 viewPos;
 uniform Material material;
-uniform DirLight dirLight;
+uniform DirLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform SpotLight spotLight;
+uniform SpotLight spotLight[NR_SPOT_LIGHTS];
 
 //fuction
 vec3 CalcPointLight(PointLight light, vec3 norm, vec3 fragPos, vec3 viewDir);
@@ -75,14 +79,17 @@ void main()
     // per lamp. In the main() function we take all the calculated colors and sum them up for
     // this fragment's final color.
     // == =====================================================
-    // phase 1: directional lighting
+
     vec3 result;
-    //result= CalcDirLight(dirLight, norm, viewDir);
+    // phase 1: directional lighting
+    for(int i = 0; i < NR_DIR_LIGHTS; i++)
+    result += CalcDirLight(dirLight[i], norm, viewDir);
     // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
     result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     // phase 3: spot light
-    result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
+    for(int i = 0; i < NR_SPOT_LIGHTS; i++)
+    result += CalcSpotLight(spotLight[i], norm, FragPos, viewDir);
     result = result * baseColor;
     FragColor = vec4(result, 1.0);
 
