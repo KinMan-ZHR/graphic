@@ -75,8 +75,13 @@ public class Mesh {
         }
     };
 
-    public static Mesh load(File filePath, int meshId) throws IOException {
-        AiScene scene = IHMCJassimp.importFile(filePath.getPath(), ASSIMP_POST);
+    public static Mesh load(String filePath, int meshId) {
+        AiScene scene = null;
+        try {
+            scene = IHMCJassimp.importFile(filePath, ASSIMP_POST);
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading mesh: " + filePath, e);
+        }
         AiMesh mesh = scene.getMeshes().get(meshId);
         return loadData(mesh, null);
     }

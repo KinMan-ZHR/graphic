@@ -22,8 +22,9 @@ public class Camera {
     float yaw=-90.0f;//偏航角
     float pitch=0.0f;//俯仰角
     // 摄像头的旋转速度
-    private float Mousesensitivity=0.01f;
-    private float MovementSpeed=0.01f;//移动速度;
+    private final float Mousesensitivity=0.01f;//鼠标灵敏度
+    private final float MovementSpeed=0.01f;//移动速度;
+    private final float LowerY=0.0f;//最低高度
     // 摄像头的缩放大小
     private float zoom=45.0f;
      public Vec3f cameraPos=new Vec3f();
@@ -134,6 +135,9 @@ public class Camera {
                 cameraPos.add(cameraRight.mul(velocity));
             //保持人物视线水平
            // cameraPos.setY(0);
+        if(cameraPos.get(1)<LowerY){
+            cameraPos.setY(LowerY);
+        }
     }
 
 

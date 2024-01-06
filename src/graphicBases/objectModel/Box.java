@@ -152,6 +152,8 @@ public class Box extends ProgrammableObject {
     @Override
     protected void happyDraw(GL4 gl4) {
         applyTranslation( position,false);
+        applyScale(2f,2f,2f,false);
+        applyRotation(2,1,1,1,true);
         applyTransformation(gl4, GameGLEventListener.objectShaderManager);
         gl4.glBindVertexArray(vao);
         gl4.glDrawArrays(GL4.GL_TRIANGLES, 0, 36); // 绘制三角形

@@ -7,7 +7,6 @@ import com.jogamp.opengl.math.Vec3f;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 
 /**
  * created by KinMan谨漫 on 2024/1/2/**
@@ -21,13 +20,13 @@ public class ShaderManager {
     public ShaderManager(GL4 gl,String vertexShaderPath, String fragmentShaderPath) {
         this.gl=gl;
         // 从文件中读取顶点着色器代码
-        String VERTEX_SHADER = readShaderFile(vertexShaderPath);
+        String VERTEX_SHADER = readFile(vertexShaderPath);
         // 从文件中读取片元着色器代码
-        String FRAGMENT_SHADER = readShaderFile(fragmentShaderPath);
+        String FRAGMENT_SHADER = readFile(fragmentShaderPath);
         //todo 着色器程序启动！
          shaderProgram = createShaderProgram(gl, VERTEX_SHADER, FRAGMENT_SHADER); // 创建着色器程序
     }
-    private static String readShaderFile(String fileName) {
+    public static String readFile(String fileName) {
         //String curDir = System.getProperty("user.dir");
         //System.out.println("当前工作目录为: " + curDir);
         // 创建一个 StringBuilder 对象，用于存储读取的内容

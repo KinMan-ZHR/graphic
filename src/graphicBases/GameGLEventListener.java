@@ -39,16 +39,16 @@ public class GameGLEventListener implements GLEventListener {
         //todo 着色器程序启动！
         objectShaderManager =new ShaderManager(gl4,"./src/shaderControl/vertex_shader.glsl","./src/shaderControl/fragment_shader.glsl");
         lightShaderManager =new ShaderManager(gl4,"./src/shaderControl/light_vs.glsl","./src/shaderControl/light_fs.glsl");
-        //调用三角形的绘制方法
-        //new Triangle2(glAutoDrawable);
-         //new Rectangle2(glAutoDrawable);
-        //new Cube2(glAutoDrawable);
-       new ForProgrammerCreate(glAutoDrawable);
+        //画什么
+        new ForProgrammerCreate(glAutoDrawable);
+        //计算时间
         lastFrameTime = System.currentTimeMillis();
-
+        //todo 全局设置
 //        深度测试
         //gl4.glClearDepth(1.0f);
         gl4.glEnable(GL4.GL_DEPTH_TEST);
+//        gl4.glEnable(GL4.GL_BLEND);
+//        gl4.glBlendFunc(GL4.GL_SRC_ALPHA, GL4.GL_ONE_MINUS_SRC_ALPHA);
 
 
     }
