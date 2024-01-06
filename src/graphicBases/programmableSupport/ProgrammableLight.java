@@ -1,9 +1,16 @@
 package graphicBases.programmableSupport;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.math.Matrix4f;
+import com.jogamp.opengl.math.Vec3f;
+import shaderControl.ShaderManager;
 
 import java.util.ArrayList;
+
+import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static graphicBases.GameGLEventListener.*;
 
 /**
  * created by KinMan谨漫 on 2024/1/4/**
@@ -21,7 +28,9 @@ public abstract class ProgrammableLight extends ProgrammableBase{
      * 实现类的命名方式为：光源名+区别名,例如：PointLightPure
      * @param glAutoDrawable
      */
-
+    protected int[] depthMapFBO = new int[1];
+    protected int[] depthMap = new int[1];
+    protected  Matrix4f lightSpaceMatrix =new Matrix4f();
     public static ArrayList<ProgrammableLight> list=new ArrayList<>();
     public ProgrammableLight(GLAutoDrawable glAutoDrawable) {
         super(glAutoDrawable);
@@ -65,24 +74,36 @@ public abstract class ProgrammableLight extends ProgrammableBase{
     protected void useTexture(GL4 gl4) {
 
     }
+    public static void shadowDrawAll(GL4 gl4, ShaderManager shaderManager){
+        for (ProgrammableLight programmableLight : list) {
+            programmableLight.shadowDraw(gl4,shaderManager);
+        }
+    }
+    public void shadowDraw(GL4 gl4, ShaderManager shaderManager){
 
-    public abstract void lightDraw(GL4 gl4 );
+
+    }
+
+
+    public abstract void lightDraw(GL4 gl4, ShaderManager shaderManager);
     /**
      * 管理所有继承自ProgrammableLight的类的绘制
      *
      */
-    public static void lightDrawAll(GL4 gl4) {
+    public static void lightDrawAll(GL4 gl4, ShaderManager shaderManager) {
         for (ProgrammableLight programmableLight : list) {
-            programmableLight.lightDraw(gl4);
+            programmableLight.lightDraw(gl4,shaderManager);
+
         }
     }
     /**
      * 画材质
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    public void materialDraw(GL4 gl4) {
+    public void materialDraw(GL4 gl4, ShaderManager shaderManager) {
 
     }
 

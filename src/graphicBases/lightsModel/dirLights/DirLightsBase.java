@@ -2,9 +2,15 @@ package graphicBases.lightsModel.dirLights;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.lightsModel.DirLight;
 import graphicBases.materialPack.Material;
+import shaderControl.ShaderManager;
+
+import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static graphicBases.GameGLEventListener.SHADOW_HEIGHT;
+import static graphicBases.GameGLEventListener.SHADOW_WIDTH;
 
 /**
  * created by KinMan谨漫 on 2024/1/5/**
@@ -28,6 +34,42 @@ public class DirLightsBase extends DirLight {
     }
     public DirLightsBase(GLAutoDrawable glAutoDrawable, float directionX, float directionY, float directionZ) {
         super(glAutoDrawable, directionX, directionY, directionZ);
+        GL4 gl4 = (GL4) glAutoDrawable.getGL();
+        //设置阴影矩阵
+        //创建深度贴图
+        gl4.glGenFramebuffers(1,depthMapFBO,0);
+        gl4.glGenTextures(1,depthMap,0);
+        gl4.glBindTexture(GL4.GL_TEXTURE_2D,depthMap[0]);
+        gl4.glTexImage2D(GL4.GL_TEXTURE_2D,0,GL4.GL_DEPTH_COMPONENT,SHADOW_WIDTH,SHADOW_HEIGHT,0,GL4.GL_DEPTH_COMPONENT,GL4.GL_FLOAT,null);
+        gl4.glTexParameteri(GL4.GL_TEXTURE_2D,GL4.GL_TEXTURE_MIN_FILTER,GL4.GL_NEAREST);
+        gl4.glTexParameteri(GL4.GL_TEXTURE_2D,GL4.GL_TEXTURE_MAG_FILTER,GL4.GL_NEAREST);
+        gl4.glTexParameteri(GL4.GL_TEXTURE_2D,GL4.GL_TEXTURE_WRAP_S,GL4.GL_CLAMP_TO_BORDER);
+        gl4.glTexParameteri(GL4.GL_TEXTURE_2D,GL4.GL_TEXTURE_WRAP_T,GL4.GL_CLAMP_TO_BORDER);
+        float[] borderColor = {1.0f,1.0f,1.0f,1.0f};
+        gl4.glTexParameterfv(GL4.GL_TEXTURE_2D,GL4.GL_TEXTURE_BORDER_COLOR,borderColor,0);
+        gl4.glBindFramebuffer(GL4.GL_FRAMEBUFFER,depthMapFBO[0]);
+        gl4.glFramebufferTexture2D(GL4.GL_FRAMEBUFFER,GL4.GL_DEPTH_ATTACHMENT,GL4.GL_TEXTURE_2D,depthMap[0],0);
+        gl4.glDrawBuffer(GL4.GL_NONE);
+        gl4.glReadBuffer(GL4.GL_NONE);
+        gl4.glBindFramebuffer(GL4.GL_FRAMEBUFFER,0);
+    }
+    @Override
+    public void shadowDraw(GL4 gl4, ShaderManager shaderManager){
+        //阴影
+        // 1. Render depth of scene to texture (from light's perspective)
+        Matrix4f lightProjection =new Matrix4f();
+        float near_plane = 1.0f, far_plane = 7.5f;
+        lightProjection.setToOrtho(-10,10,-10,10,near_plane,far_plane);
+        Matrix4f lightView =new Matrix4f();
+        lightView.setToLookAt(position,direction,new Vec3f(0,1,0),new Matrix4f());
+
+        lightSpaceMatrix.mul(lightProjection,lightView);
+        shaderManager.useShaderProgram();
+        shaderManager.setUniform("lightSpaceMatrix",lightSpaceMatrix);
+        gl4.glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        gl4.glBindFramebuffer(GL4.GL_FRAMEBUFFER, depthMapFBO[0]);
+        gl4.glClear(GL_DEPTH_BUFFER_BIT); // 清屏
+
     }
 
     /**
@@ -73,9 +115,10 @@ public class DirLightsBase extends DirLight {
      * gl4.glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    protected void happyDraw(GL4 gl4) {
+    protected void happyDraw(GL4 gl4, ShaderManager shaderManager) {
 
     }
 

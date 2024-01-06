@@ -1,14 +1,11 @@
 package graphicBases.lightsModel;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
-import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableLight;
-
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
+import shaderControl.ShaderManager;
 
 /**
  * created by KinMan谨漫 on 2024/1/4/**
@@ -45,18 +42,19 @@ public abstract class PointLight extends ProgrammableLight {
 
     /**
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    public void lightDraw(GL4 gl4) {
+    public void lightDraw(GL4 gl4, ShaderManager shaderManager) {
         {
             for (int i = 0; i < count; i++) {
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].position", position);
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].ambient", material.getAmbient());
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].diffuse", material.getDiffuse());
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].specular", material.getSpecular());
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].constant", constant);
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].linear", linear);
-                GameGLEventListener.objectShaderManager.setUniform("pointLights[" + i + "].quadratic", quadratic);
+                shaderManager.setUniform("pointLights[" + i + "].position", position);
+                shaderManager.setUniform("pointLights[" + i + "].ambient", material.getAmbient());
+                shaderManager.setUniform("pointLights[" + i + "].diffuse", material.getDiffuse());
+                shaderManager.setUniform("pointLights[" + i + "].specular", material.getSpecular());
+                shaderManager.setUniform("pointLights[" + i + "].constant", constant);
+                shaderManager.setUniform("pointLights[" + i + "].linear", linear);
+                shaderManager.setUniform("pointLights[" + i + "].quadratic", quadratic);
             }
         }
 

@@ -1,10 +1,10 @@
 package graphicBases.vertexPack;
 
-import MathUtils.TransformTool;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import graphicBases.GameGLEventListener;
 import graphicBases.materialPack.Material;
+import shaderControl.ShaderManager;
 import textureBinding.TextureTool;
 
 import static com.jogamp.opengl.GL.GL_FLOAT;
@@ -91,14 +91,15 @@ public class Cube2 extends Cube{
      * 愉快的画画，用gl4.glDraw选择画什么即可,最好是随时会变的部分
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    protected void happyDraw(GL4 gl4) {
+    protected void happyDraw(GL4 gl4, ShaderManager shaderManager) {
         //System.out.println("texture"+texture.length);
         for (int i = 0; i < 10; i++) {
             applyTranslation(cubePositions[i]);
             applyRotation(getDeltaTime()*50.0f,0.5f,1.0f,0.0f,false);
-            applyTransformation(gl4,GameGLEventListener.objectShaderManager);
+            applyTransformation(gl4,shaderManager);
             gl4.glBindVertexArray(vao);
             gl4.glDrawArrays(GL_TRIANGLES, 0, 36);
         }

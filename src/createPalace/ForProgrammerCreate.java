@@ -23,10 +23,11 @@ public class ForProgrammerCreate {
      */
     public ForProgrammerCreate(GLAutoDrawable glAutoDrawable) {
         new Box(glAutoDrawable,0,1,-5);
+        new DirLightsBase(glAutoDrawable, -0.2f, 10.0f, -0.3f);
         new PointLightBase(glAutoDrawable,1.2f,1.0f,-2.0f);
         new PointLightBase(glAutoDrawable,-1.2f,1.0f,2.0f);
         new SpotLightBase(glAutoDrawable, GameGLEventListener.camera.cameraPos,GameGLEventListener.camera.cameraFront);
-        new DirLightsBase(glAutoDrawable, -0.2f, 10.0f, -0.3f);
+
         new Cottage(glAutoDrawable,4,1,-9);
         new Floor(glAutoDrawable,0,-1,0);
     }

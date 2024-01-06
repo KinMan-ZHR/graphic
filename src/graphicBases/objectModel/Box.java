@@ -6,6 +6,7 @@ import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
 import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableObject;
+import shaderControl.ShaderManager;
 import textureBinding.TextureTool;
 
 import static com.jogamp.opengl.GL.GL_FLOAT;
@@ -133,8 +134,8 @@ public class Box extends ProgrammableObject {
         gl4.glEnableVertexAttribArray(0); // 启用顶点属性数组
      gl4.glVertexAttribPointer(0, 3, GL_FLOAT, false, 8*Float.BYTES, 0); // 设置顶点属性数组的格式和位置
      // 法向量属性
-     gl4.glVertexAttribPointer(3, 3, GL_FLOAT, false, 8*Float.BYTES, 3*Float.BYTES);
-     gl4.glEnableVertexAttribArray(3);
+     gl4.glVertexAttribPointer(1, 3, GL_FLOAT, false, 8*Float.BYTES, 3*Float.BYTES);
+     gl4.glEnableVertexAttribArray(1);
      // 纹理坐标属性
      gl4.glVertexAttribPointer(2, 2, GL_FLOAT, false, 8*Float.BYTES, 6*Float.BYTES);
      gl4.glEnableVertexAttribArray(2);
@@ -148,13 +149,14 @@ public class Box extends ProgrammableObject {
      * gl4.glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    protected void happyDraw(GL4 gl4) {
+    protected void happyDraw(GL4 gl4, ShaderManager shaderManager) {
         applyTranslation( position,false);
         applyScale(2f,2f,2f,false);
-        applyRotation(2,1,1,1,true);
-        applyTransformation(gl4, GameGLEventListener.objectShaderManager);
+       // applyRotation(2,1,1,1,true);
+        applyTransformation(gl4, shaderManager);
         gl4.glBindVertexArray(vao);
         gl4.glDrawArrays(GL4.GL_TRIANGLES, 0, 36); // 绘制三角形
 

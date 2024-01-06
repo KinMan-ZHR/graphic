@@ -4,8 +4,10 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
-import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableLight;
+import shaderControl.ShaderManager;
+
+import static com.jogamp.opengl.GL.*;
 
 /**
  * created by KinMan谨漫 on 2024/1/5/**
@@ -38,15 +40,19 @@ public abstract class DirLight extends ProgrammableLight {
 
     /**
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    public void lightDraw(GL4 gl4) {
+    public void lightDraw(GL4 gl4, ShaderManager shaderManager) {
         for (int i = 0; i < count; i++) {
-            GameGLEventListener.objectShaderManager.setUniform("dirLights[" + i + "].direction", direction);
-            GameGLEventListener.objectShaderManager.setUniform("dirLights[" + i + "].ambient", material.getAmbient());
-            GameGLEventListener.objectShaderManager.setUniform("dirLights[" + i + "].diffuse", material.getDiffuse());
-            GameGLEventListener.objectShaderManager.setUniform("dirLights[" + i + "].specular", material.getSpecular());
+            shaderManager.setUniform("dirLights[" + i + "].direction", direction);
+            shaderManager.setUniform("dirLights[" + i + "].ambient", material.getAmbient());
+            shaderManager.setUniform("dirLights[" + i + "].diffuse", material.getDiffuse());
+            shaderManager.setUniform("dirLights[" + i + "].specular", material.getSpecular());
         }
+        shaderManager.setUniform("lightSpaceMatrix",lightSpaceMatrix);
+        gl4.glActiveTexture(GL_TEXTURE1);
+        gl4.glBindTexture(GL_TEXTURE_2D, depthMap[0]);
 
     }
 }

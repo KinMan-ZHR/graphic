@@ -4,6 +4,9 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
+import shaderControl.ShaderManager;
+
+import java.util.ArrayList;
 
 import static com.jogamp.opengl.GL.GL_TEXTURE0;
 import static com.jogamp.opengl.GL.GL_TEXTURE_2D;
@@ -26,48 +29,54 @@ public abstract class ProgrammableObject extends ProgrammableBase{
      * 实现类的命名方式为：形状名+材质名+区别名,例如：BoxGoldPure
      * @param glAutoDrawable
      */
+    public static ArrayList<ProgrammableObject> list=new ArrayList<>();
     public ProgrammableObject(GLAutoDrawable glAutoDrawable) {
         super(glAutoDrawable);
+        list.add(this);
     }
     public ProgrammableObject(GLAutoDrawable glAutoDrawable, Vec3f position) {
         super(glAutoDrawable);
         this.position=position;
+        list.add(this);
     }
     public ProgrammableObject(GLAutoDrawable glAutoDrawable, float positionX, float positionY, float positionZ) {
         super(glAutoDrawable);
         this.position.set(positionX,positionY,positionZ);
+        list.add(this);
     }
 
 
     /**
      * 一般而言画材质是物体该做的事情，但是如果你想要改变材质，这里建议您使用继承的方式，重写materialDraw方法
-     GameGLEventListener.objectShaderManager.useShaderProgram();
-     GameGLEventListener.objectShaderManager.setUniform("material.textureNum",texture.length);
-     for (int i = 0; i < texture.length; i++) {
-     gl4.glActiveTexture(GL_TEXTURE0+i);
-     gl4.glBindTexture(GL_TEXTURE_2D, texture[i]);
-     GameGLEventListener.objectShaderManager.setUniform("material.texture"+i,i);
-     }
-     GameGLEventListener.objectShaderManager.setUniform("material.ambient",material.getAmbient());
-     GameGLEventListener.objectShaderManager.setUniform("material.diffuse",material.getDiffuse());
-     GameGLEventListener.objectShaderManager.setUniform("material.specular",material.getSpecular());
-     GameGLEventListener.objectShaderManager.setUniform("material.shininess",material.getShininess());
+     * GameGLEventListener.objectShaderManager.useShaderProgram();
+     * GameGLEventListener.objectShaderManager.setUniform("material.textureNum",texture.length);
+     * for (int i = 0; i < texture.length; i++) {
+     * gl4.glActiveTexture(GL_TEXTURE0+i);
+     * gl4.glBindTexture(GL_TEXTURE_2D, texture[i]);
+     * GameGLEventListener.objectShaderManager.setUniform("material.texture"+i,i);
+     * }
+     * GameGLEventListener.objectShaderManager.setUniform("material.ambient",material.getAmbient());
+     * GameGLEventListener.objectShaderManager.setUniform("material.diffuse",material.getDiffuse());
+     * GameGLEventListener.objectShaderManager.setUniform("material.specular",material.getSpecular());
+     * GameGLEventListener.objectShaderManager.setUniform("material.shininess",material.getShininess());
+     *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    public void materialDraw(GL4 gl4) {
-        GameGLEventListener.objectShaderManager.useShaderProgram();
-        GameGLEventListener.objectShaderManager.setUniform("material.textureNum",texture.length);
+    public void materialDraw(GL4 gl4, ShaderManager shaderManager) {
+        shaderManager.useShaderProgram();
+        shaderManager.setUniform("material.textureNum",texture.length);
         for (int i = 0; i < texture.length; i++) {
             gl4.glActiveTexture(GL_TEXTURE0+i);
             gl4.glBindTexture(GL_TEXTURE_2D, texture[i]);
-            GameGLEventListener.objectShaderManager.setUniform("material.texture"+i,i);
+            shaderManager.setUniform("material.texture"+i,i);
         }
 
-        GameGLEventListener.objectShaderManager.setUniform("material.ambient",material.getAmbient());
-        GameGLEventListener.objectShaderManager.setUniform("material.diffuse",material.getDiffuse());
-        GameGLEventListener.objectShaderManager.setUniform("material.specular",material.getSpecular());
-        GameGLEventListener.objectShaderManager.setUniform("material.shininess",material.getShininess());
+        shaderManager.setUniform("material.ambient",material.getAmbient());
+        shaderManager.setUniform("material.diffuse",material.getDiffuse());
+        shaderManager.setUniform("material.specular",material.getSpecular());
+        shaderManager.setUniform("material.shininess",material.getShininess());
 
     }
     @Override

@@ -7,6 +7,7 @@ import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
 import graphicBases.lightsModel.PointLight;
 import graphicBases.materialPack.Material;
+import shaderControl.ShaderManager;
 
 import static com.jogamp.opengl.GL.GL_TRIANGLES;
 
@@ -120,15 +121,16 @@ public class PointLightBase extends PointLight {
      * gl4.glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    protected void happyDraw(GL4 gl4) {
+    protected void happyDraw(GL4 gl4, ShaderManager shaderManager) {
         applyTranslation(position,false);
         //applyRotation(getDeltaTime()*50.0f,0.5f,1.0f,0.0f,false);
         applyScale(0.2f,0.2f,0.2f,false);
-        applyTransformation(gl4, GameGLEventListener.lightShaderManager);
-        GameGLEventListener.lightShaderManager.setUniform("view", GameGLEventListener.camera.view);
-        GameGLEventListener.lightShaderManager.setUniform("projection", GameGLEventListener.camera.projection);
+        applyTransformation(gl4, shaderManager);
+        shaderManager.setUniform("view", GameGLEventListener.camera.view);
+        shaderManager.setUniform("projection", GameGLEventListener.camera.projection);
         gl4.glBindVertexArray(vao);
         gl4.glDrawArrays(GL_TRIANGLES, 0, 36);
 

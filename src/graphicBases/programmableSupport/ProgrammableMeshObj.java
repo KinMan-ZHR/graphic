@@ -5,7 +5,7 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.materialPack.Material;
-import textureBinding.TextureTool;
+import shaderControl.ShaderManager;
 
 import static com.jogamp.opengl.GL.GL_FLOAT;
 
@@ -56,15 +56,16 @@ public abstract class ProgrammableMeshObj extends ProgrammableObject{
     protected abstract int[] defineTexture(GL4 gl4);
     /**
      * 愉快的画画，用gl4.glDraw选择画什么即可,最好是随时会变的部分
-     *    applyTranslation( position,false);
-     *    applyTransformation(gl4, GameGLEventListener.objectShaderManager);
-     *    gl4.glBindVertexArray(vao);
-     *    gl4.glDrawElements(GL4.GL_TRIANGLES, indicesData.length, GL_UNSIGNED_INT, 0);
+     * applyTranslation( position,false);
+     * applyTransformation(gl4, GameGLEventListener.objectShaderManager);
+     * gl4.glBindVertexArray(vao);
+     * gl4.glDrawElements(GL4.GL_TRIANGLES, indicesData.length, GL_UNSIGNED_INT, 0);
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    protected abstract void happyDraw(GL4 gl4);
+    protected abstract void happyDraw(GL4 gl4, ShaderManager shaderManager);
     /**
      * float[]ambient,float[]diffuse,float[]specular,float shininess
      * 构造Material
@@ -139,8 +140,8 @@ public abstract class ProgrammableMeshObj extends ProgrammableObject{
         gl4.glEnableVertexAttribArray(0); // 启用顶点属性数组
         gl4.glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0); // 设置顶点属性数组的格式和位置
         // 法向量属性
-        gl4.glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, (long) vertices.length *Float.BYTES);
-        gl4.glEnableVertexAttribArray(3);
+        gl4.glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, (long) vertices.length *Float.BYTES);
+        gl4.glEnableVertexAttribArray(1);
         // 纹理坐标属性
         gl4.glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, (long) (vertices.length + normals.length) *Float.BYTES);
         gl4.glEnableVertexAttribArray(2);

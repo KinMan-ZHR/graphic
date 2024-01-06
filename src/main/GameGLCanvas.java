@@ -1,3 +1,5 @@
+package main;
+
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
@@ -13,8 +15,8 @@ import java.awt.*;
 public class GameGLCanvas {
     // 定义一些常量和变量
     private static final int FPS = 60; // 动画的帧率
-    private static final int WINDOW_WIDTH = 800; // 窗口的宽度
-    private static final int WINDOW_HEIGHT = 600; // 窗口的高度
+    public static final int WINDOW_WIDTH = 800; // 窗口的宽度
+    public static final int WINDOW_HEIGHT = 600; // 窗口的高度
     private static final String WINDOW_TITLE = "Basic Frame"; // 窗口的标题
 
     private static volatile GameGLCanvas gameGLCanvas;

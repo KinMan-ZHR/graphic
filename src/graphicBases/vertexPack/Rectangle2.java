@@ -5,6 +5,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import graphicBases.GameGLEventListener;
 import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableObject;
+import shaderControl.ShaderManager;
 import textureBinding.TextureTool;
 
 import static com.jogamp.opengl.GL.*;
@@ -83,14 +84,14 @@ public class Rectangle2 extends ProgrammableObject {
     }
 
     @Override
-    public void happyDraw(GL4 gl4) {
+    public void happyDraw(GL4 gl4, ShaderManager shaderManager) {
         //gl4.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式
         //gl4.glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//填充模式,默认
         applyTranslation(0.5f,-0.5f,0.0f,false);
         applyRotation(-55.0f,0.0f,0.0f,0.0f,false);
-        applyTransformation(gl4,GameGLEventListener.objectShaderManager);
-        GameGLEventListener.objectShaderManager.setUniform("view", GameGLEventListener.camera.view);
-        GameGLEventListener.objectShaderManager.setUniform("projection", GameGLEventListener.camera.projection);
+        applyTransformation(gl4,shaderManager);
+        shaderManager.setUniform("view", GameGLEventListener.camera.view);
+        shaderManager.setUniform("projection", GameGLEventListener.camera.projection);
         gl4.glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 

@@ -5,6 +5,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.lightsModel.SpotLight;
 import graphicBases.materialPack.Material;
+import shaderControl.ShaderManager;
 
 /**
  * created by KinMan谨漫 on 2024/1/5/**
@@ -94,9 +95,10 @@ public class SpotLightBase extends SpotLight {
      * gl4.glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
      *
      * @param gl4
+     * @param objectShaderManager
      */
     @Override
-    protected void happyDraw(GL4 gl4) {
+    protected void happyDraw(GL4 gl4, ShaderManager objectShaderManager) {
 
     }
 

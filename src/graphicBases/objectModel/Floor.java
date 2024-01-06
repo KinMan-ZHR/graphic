@@ -7,6 +7,7 @@ import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
 import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableMeshObj;
+import shaderControl.ShaderManager;
 import textureBinding.TextureTool;
 
 import static com.jogamp.opengl.GL.GL_UNSIGNED_INT;
@@ -62,11 +63,12 @@ public class Floor extends ProgrammableMeshObj {
      * gl4.glDrawElements(GL4.GL_TRIANGLES, indicesData.length, GL_UNSIGNED_INT, 0);
      *
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    protected void happyDraw(GL4 gl4) {
+    protected void happyDraw(GL4 gl4, ShaderManager shaderManager) {
         applyTranslation( position,false);
-        applyTransformation(gl4, GameGLEventListener.objectShaderManager);
+        applyTransformation(gl4, shaderManager);
         gl4.glBindVertexArray(vao);
         gl4.glDrawElements(GL4.GL_TRIANGLES, indicesData.length, GL_UNSIGNED_INT, 0);
 

@@ -12,6 +12,7 @@ import graphicBases.cameraModel.Camera;
 import graphicBases.programmableSupport.ProgrammableBase;
 import graphicBases.programmableSupport.ProgrammableLight;
 import graphicBases.programmableSupport.ProgrammableObject;
+import main.GameGLCanvas;
 import shaderControl.ShaderManager;
 
 import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
@@ -24,8 +25,10 @@ public class GameGLEventListener implements GLEventListener {
             0.5f, -0.5f, 0.0f,
             0.0f, 0.5f, 0.0f
     };
-    public static  ShaderManager objectShaderManager; // 着色器程序的句柄
-    public static ShaderManager lightShaderManager;
+    private static  ShaderManager objectShaderManager; // 着色器程序的句柄
+    private static ShaderManager lightShaderManager;
+    private static ShaderManager shadowShaderManager;
+    private static ShaderManager depthShaderManager;
 
     // 主方法，创建一个窗口并添加一个画布
     public static Camera camera =new Camera(0,0,4,0,0,0);
@@ -33,12 +36,16 @@ public class GameGLEventListener implements GLEventListener {
     private static long lastFrameTime= System.currentTimeMillis();
     private static long currentFrameTime= System.currentTimeMillis();//当前时间 单位：毫秒
 
+    public static final int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL4 gl4 = glAutoDrawable.getGL().getGL4(); // 获取OpenGL的对象
         //todo 着色器程序启动！
-        objectShaderManager =new ShaderManager(gl4,"./src/shaderControl/vertex_shader.glsl","./src/shaderControl/fragment_shader.glsl");
+        //objectShaderManager =new ShaderManager(gl4,"./src/shaderControl/vertex_shader.glsl","./src/shaderControl/fragment_shader.glsl");
+        objectShaderManager =new ShaderManager(gl4,"./src/shaderControl/shadowMapping_vs.glsl","./src/shaderControl/shadowMapping_fs.glsl");
         lightShaderManager =new ShaderManager(gl4,"./src/shaderControl/light_vs.glsl","./src/shaderControl/light_fs.glsl");
+       // shadowShaderManager =new ShaderManager(gl4,"./src/shaderControl/depth_vs.glsl","./src/shaderControl/depth_fs.glsl");
+       // depthShaderManager =new ShaderManager(gl4,"./src/shaderControl/quad_depth_vs.glsl","./src/shaderControl/quad_depth_fs.glsl");
         //画什么
         new ForProgrammerCreate(glAutoDrawable);
         //计算时间
@@ -46,10 +53,18 @@ public class GameGLEventListener implements GLEventListener {
         //todo 全局设置
 //        深度测试
         //gl4.glClearDepth(1.0f);
-        gl4.glEnable(GL4.GL_DEPTH_TEST);
+         gl4.glEnable(GL4.GL_DEPTH_TEST);
 //        gl4.glEnable(GL4.GL_BLEND);
 //        gl4.glBlendFunc(GL4.GL_SRC_ALPHA, GL4.GL_ONE_MINUS_SRC_ALPHA);
+        //定义视口
+         gl4.glViewport(0, 0, GameGLCanvas.WINDOW_WIDTH, GameGLCanvas.WINDOW_HEIGHT);
+       //定义清屏的颜色
+        gl4.glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // 设置清屏时的颜色
 
+        objectShaderManager.useShaderProgram();
+        //设置阴影纹理
+        objectShaderManager.setUniform("diffuseTexture",0);
+        objectShaderManager.setUniform("shadowMap",1);
 
     }
 
@@ -87,30 +102,46 @@ public class GameGLEventListener implements GLEventListener {
         frameDeltaTime=currentFrameTime-lastFrameTime;
         lastFrameTime=currentFrameTime;
         GL4 gl = glAutoDrawable.getGL().getGL4(); // 获取OpenGL的对象
-        gl.glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // 设置清屏时的颜色
+//选光源中第一个来产生阴影
+        //todo 画阴影场景
+//        ProgrammableLight.shadowDrawAll(gl,shadowShaderManager);
+//        // 1. first render to depth map
+//        ProgrammableObject.happyDrawAll(gl,shadowShaderManager);
+//        //解绑
+//        gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
+
+        // 2. Render scene as normal using the generated depth/shadow map
+        reshape(glAutoDrawable,0, 0, GameGLCanvas.WINDOW_WIDTH, GameGLCanvas.WINDOW_HEIGHT);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT); // 清屏
-        objectShaderManager.useShaderProgram();
         //观察矩阵
         camera.lookAt();
+        objectShaderManager.useShaderProgram();
         GameGLEventListener.objectShaderManager.setUniform("view", GameGLEventListener.camera.view);
         GameGLEventListener.objectShaderManager.setUniform("projection", GameGLEventListener.camera.projection);
         GameGLEventListener.objectShaderManager.setUniform("viewPos", GameGLEventListener.camera.cameraPos);
-        //光照
-        ProgrammableLight.lightDrawAll(gl);
+        //todo 画正常场景
+        //光源
+        ProgrammableLight.lightDrawAll(gl,objectShaderManager);//暂时这个传参无影响
         //物体
-        ProgrammableBase.happyDrawAll(gl);
+        ProgrammableObject.happyDrawAll(gl,objectShaderManager);
+        //todo 画光源
+        ProgrammableLight.happyDrawAll(gl,lightShaderManager);
+        //debug
+//        depthShaderManager.useShaderProgram();
+//        depthShaderManager.setUniform("near_plane",near_plane);
+//        depthShaderManager.setUniform("far_plane",far_plane);
+//        gl.glActiveTexture(GL4.GL_TEXTURE0);
+//        gl.glBindTexture(GL4.GL_TEXTURE_2D,ProgrammableLight.depthMap[0]);
+
+    }
+
+    private void renderScene(ShaderManager shadowShaderManager) {
     }
 
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable,int x,  int y, int width, int height) {
         // TODO Auto-generated method stub
-        final GL4 gl = glAutoDrawable.getGL().getGL4();
-        // get the OpenGL 2 graphics object
-        if(height <= 0) height = 1;
-        //preventing devided by 0 exception height = 1;
-        final float h = (float) width / (float) height;
-        // display area to cover the entire window
-        gl.glViewport(0, 0, width, height);
+
 
     }
     // 从文件中读取着色器代码的函数

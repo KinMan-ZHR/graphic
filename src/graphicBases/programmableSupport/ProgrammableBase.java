@@ -166,29 +166,33 @@ public abstract class ProgrammableBase {
 
     /**
      * 最重要的类，用来画画
+     *
      * @param gl4
+     * @param shaderManager
      */
-    protected void allReadyDraw(GL4 gl4){
+    protected void allReadyDraw(GL4 gl4, ShaderManager shaderManager){
         //画材质
-        materialDraw(gl4);
+        materialDraw(gl4,shaderManager);
         //清空所有的临时矩阵，以保证为帧内可累加，帧与帧之间不累加
         tempRotation=new Matrix4f();
         tempTranslation=new Matrix4f();
         tempScale=new Matrix4f();
-        happyDraw(gl4);
+        happyDraw(gl4,shaderManager);
     }
     /**
      * 画材质
+     *
      * @param gl4
+     * @param shaderManager
      */
-    public abstract void materialDraw(GL4 gl4);
+    public abstract void materialDraw(GL4 gl4, ShaderManager shaderManager);
     /**
      *  愉快的画画，用gl4.glDraw选择画什么即可,最好是随时会变的部分
      *      Matrix4f model = new Matrix4f();
      *      GameGLEventListener.objectShaderManager.setUniform("model", model);
      *      gl4.glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
      */
-    protected abstract void happyDraw(GL4 gl4);
+    protected abstract void happyDraw(GL4 gl4, ShaderManager shaderManager);
     protected void deleteBind(GL4 gl4){
         gl4.glBindVertexArray(0); // 解绑顶点数组对象
         gl4.glBindBuffer(GL.GL_ARRAY_BUFFER, 0); // 解绑顶点缓冲对象
@@ -293,9 +297,9 @@ public abstract class ProgrammableBase {
      * 管理所有继承自ProgrammableBase的类的绘制
      *
      */
-    public static void happyDrawAll(GL4 gl4){
+    public static void happyDrawAll(GL4 gl4, ShaderManager shaderManager){
         for (ProgrammableBase programmableBase : list) {
-            programmableBase.allReadyDraw(gl4);
+            programmableBase.allReadyDraw(gl4,shaderManager);
         }
     }
     /**

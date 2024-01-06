@@ -4,8 +4,8 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.math.Vec3f;
 import graphicBases.GameGLEventListener;
-import graphicBases.materialPack.Material;
 import graphicBases.programmableSupport.ProgrammableLight;
+import shaderControl.ShaderManager;
 
 /**
  * created by KinMan谨漫 on 2024/1/4/**
@@ -50,20 +50,21 @@ public abstract class SpotLight extends ProgrammableLight {
 
     /**
      * @param gl4
+     * @param shaderManager
      */
     @Override
-    public void lightDraw(GL4 gl4) {
+    public void lightDraw(GL4 gl4, ShaderManager shaderManager) {
         for (int i = 0; i < count; i++) {
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].position",position);
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].direction",direction);
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].ambient",material.getAmbient());
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].diffuse",material.getDiffuse());
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].specular",material.getSpecular());
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].constant",constant);
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].linear",linear);
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].quadratic",quadratic);
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].cutOff",cutOff);
-            GameGLEventListener.objectShaderManager.setUniform("spotLight["+i+"].outerCutOff",outerCutOff);
+            shaderManager.setUniform("spotLight["+i+"].position",position);
+            shaderManager.setUniform("spotLight["+i+"].direction",direction);
+            shaderManager.setUniform("spotLight["+i+"].ambient",material.getAmbient());
+            shaderManager.setUniform("spotLight["+i+"].diffuse",material.getDiffuse());
+            shaderManager.setUniform("spotLight["+i+"].specular",material.getSpecular());
+            shaderManager.setUniform("spotLight["+i+"].constant",constant);
+            shaderManager.setUniform("spotLight["+i+"].linear",linear);
+            shaderManager.setUniform("spotLight["+i+"].quadratic",quadratic);
+            shaderManager.setUniform("spotLight["+i+"].cutOff",cutOff);
+            shaderManager.setUniform("spotLight["+i+"].outerCutOff",outerCutOff);
         }
 
 
